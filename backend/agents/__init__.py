@@ -13,7 +13,7 @@ async def load_all_agents():
     
     await get_internet_search_workflow()
     await get_mathematics_workflow()
-    # await get_master_agent()    # Loading master V1
+    await get_master_agent()    # Loading master V1
 
     await get_masterV2_agent()  # Loading master V2
 
