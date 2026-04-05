@@ -3,6 +3,7 @@ import logging
 from typing import Optional
 
 from pydantic import BaseModel
+from langgraph.errors import GraphRecursionError
 
 from core.config import settings
 import uvicorn
@@ -78,9 +79,12 @@ async def stream_agent_endpoint(request: QueryRequest):
         return JSONResponse(content={"error": "Query is required"}, status_code=400)
 
     async def event_generator():
-        # async for token in stream_master_agent(query, thread_id):
-        async for token in stream_masterV2_agent(query, thread_id):
-            yield f"data: {token}\n\n"
+        try:
+            # async for token in stream_master_agent(query, thread_id):
+            async for token in stream_masterV2_agent(query, thread_id):
+                yield f"data: {token}\n\n"
+        except GraphRecursionError:
+            yield f"data: I'm having trouble processing this query. Could you provide more specific details so I can help you better?\n\n"
         yield "data: [DONE]\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")

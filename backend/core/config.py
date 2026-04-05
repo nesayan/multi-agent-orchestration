@@ -19,6 +19,8 @@ class Settings(BaseSettings):
 
     tavily_api_key: SecretStr
 
+    graph_recursion_limit: int = 10
+
     @model_validator(mode="after")
     def validate_configuration(self) -> "Settings":
         if not self.azure_openai_api_key.get_secret_value() or not self.azure_openai_endpoint or \

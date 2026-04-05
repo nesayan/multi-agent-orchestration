@@ -1,0 +1,73 @@
+#chat {
+  max-width: 600px;
+  margin-top: 76px;
+  margin-bottom: 20px;
+  height: calc(100vh - 96px);
+}
+
+#messages {
+  background: #f0f2f5;
+}
+
+.message-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 0.75rem;
+}
+
+.message-wrapper.user {
+  flex-direction: row-reverse;
+}
+
+.msg-icon {
+  font-size: 1.1rem;
+  margin-top: 4px;
+  color: #6c757d;
+}
+
+.message-wrapper.user .msg-icon {
+  color: #007bff;
+}
+
+.message {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  max-width: 80%;
+  width: fit-content;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.message.user {
+  background: #007bff;
+  color: #fff;
+  margin-left: auto;
+}
+
+.message.bot {
+  background: #e9ecef;
+  color: #333;
+}
+
+.message.bot:empty {
+  display: none;
+}
+
+.message-wrapper.bot:has(.message.bot:empty) {
+  display: none;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc;
+  border-top-color: #007bff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

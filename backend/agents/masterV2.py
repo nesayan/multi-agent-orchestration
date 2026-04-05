@@ -33,8 +33,11 @@ system_prompt = """
                 Must Instructions:
                 1. Never refer to old conversation history when answering a query. Always answer based on the current query and the information retrieved by the subagents.
                 2. Pass the user's query exactly as-is to the subagent. Do NOT modify, rephrase, or add any date/year context to it.
-                3. If you are unsure which agent to delegate. Pick the internet search agent as the fallback.
-                4. Once a subagent has already returned results for the current query, you MUST choose FINISH to synthesize the response. Do NOT re-delegate to the same subagent.
+                3. For simple conversational queries (greetings, small talk, thank you, etc.) that do not require any information retrieval or computation, choose FINISH immediately. Do NOT delegate to any subagent.
+                4. Only use the internet search agent as a fallback when the query genuinely requires external information and no other subagent fits.
+                5. Once a subagent has already returned results for the current query, you MUST choose FINISH to synthesize the response. Do NOT re-delegate to the same subagent.
+                6. If the user's query is unclear, incomplete, or doesn't make sense, choose FINISH and ask the user to provide more details instead of delegating to a subagent.
+                7. If the user's query is ambiguous (e.g. a common name, a broad topic with many possible meanings), choose FINISH and ask the user to clarify with more specific details rather than searching with insufficient context.
                 
                 Available subagents:
                 - internet_search: Use this for general queries or to search for the latest information on any topic.
@@ -101,9 +104,9 @@ async def get_masterV2_agent():
         graph.add_edge("synthesizer", END)
 
         _master = graph.compile(checkpointer=InMemorySaver())
-        _master.recursion_limit = 25
+        _master.recursion_limit = settings.graph_recursion_limit
 
-        logger.info("Master agent loaded with subagraphs")
+        logger.info(f"Master agent loaded with subgraphs (recursion_limit={settings.graph_recursion_limit})")
 
         png_data = _master.get_graph(xray=True).draw_mermaid_png()
         output_path = Path(__file__).resolve().parent.parent / "masterV2.png"

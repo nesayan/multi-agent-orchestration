@@ -31,6 +31,8 @@ system_prompt = f"""
                 1. Never refer to old conversation history when answering a query. Always answer based on the current query and the information retrieved by the subagents.
                 2. Pass the user's query exactly as-is to the subagent. Do NOT modify, rephrase, or add any date/year context to it.
                 3. If you are unsure which agent to delegate. Pick the internet search agent as the fallback.
+                4. If the user's query is unclear, incomplete, or doesn't make sense, ask the user to provide more details instead of delegating to a subagent.
+                5. If the user's query is ambiguous (e.g. a common name, a broad topic with many possible meanings), ask the user to clarify with more specific details rather than searching with insufficient context.
                 
                 Always prefer using the subagents to answer the user's query, and only answer directly if the query cannot be handled by any of the subagents.
                 """
@@ -53,7 +55,8 @@ async def get_master_agent():
             checkpointer=InMemorySaver(),
             system_prompt=system_prompt
         )
-        logger.info("Master agent loaded with subagents as tools")
+        _master.recursion_limit = settings.graph_recursion_limit
+        logger.info(f"Master agent loaded with subagents as tools (recursion_limit={settings.graph_recursion_limit})")
 
         png_data = _master.get_graph(xray=True).draw_mermaid_png()
         output_path = Path(__file__).resolve().parent.parent / "master.png"
