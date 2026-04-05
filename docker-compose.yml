@@ -1,0 +1,16 @@
+services:
+  backend:
+    build: ./backend
+    env_file:
+      - ./backend/core/.env
+    ports:
+      - "80:80"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - BACKEND_URL=http://localhost:80
+    depends_on:
+      - backend

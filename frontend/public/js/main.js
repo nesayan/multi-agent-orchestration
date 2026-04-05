@@ -1,4 +1,4 @@
-const BACKEND_URL = "http://localhost:80";
+let BACKEND_URL = "";
 
 const form = document.getElementById("chat-form");
 const input = document.getElementById("query");
@@ -6,6 +6,19 @@ const messages = document.getElementById("messages");
 
 // Generate a unique thread_id per session
 const threadId = crypto.randomUUID();
+
+// Fetch backend URL from server config on page load
+async function loadConfig() {
+  try {
+    const res = await fetch("/config");
+    const config = await res.json();
+    BACKEND_URL = config.backendUrl;
+  } catch (err) {
+    console.error("Failed to load config, using default", err);
+    BACKEND_URL = "http://localhost:80";
+  }
+}
+loadConfig();
 
 // Append a message to the chatbox
 function appendMessage(role, text) {
